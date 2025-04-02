@@ -19,7 +19,7 @@ public class UserController {
 
     @GetMapping("/user/{studentNumber}")
     public User getUser(@PathVariable Long studentNumber) {
-        return userService.getUserByStudentNumber(studentNumber);
+        return (User) userService.getUsersWithCustomQuery(studentNumber);
     }
 
 }

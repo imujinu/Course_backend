@@ -1,21 +1,26 @@
 package coruse.Course_registration.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
 public class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private Long studentNumber;
     private String password;
     private String major;
-    private long grade;
+    private Long grade;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<CourseRegistration> registrations = new ArrayList<>();
 
     @Builder
     public User(Long id, String name, Long studentNumber, String password, String major, long grade) {
@@ -25,5 +30,9 @@ public class User {
         this.password = password;
         this.major = major;
         this.grade = grade;
+    }
+
+    public User() {
+
     }
 }
