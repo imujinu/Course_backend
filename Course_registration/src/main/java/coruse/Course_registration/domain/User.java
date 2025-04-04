@@ -1,38 +1,33 @@
 package coruse.Course_registration.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
-    private Long studentNumber;
+    private String email;
+    private String studentNumber;
     private String password;
     private String major;
-    private Long grade;
+    private Double grade;
 
+    @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CourseRegistration> registrations = new ArrayList<>();
 
-    @Builder
-    public User(Long id, String name, Long studentNumber, String password, String major, long grade) {
-        this.id = id;
-        this.name = name;
-        this.studentNumber = studentNumber;
-        this.password = password;
-        this.major = major;
-        this.grade = grade;
-    }
-
-    public User() {
-
-    }
 }
