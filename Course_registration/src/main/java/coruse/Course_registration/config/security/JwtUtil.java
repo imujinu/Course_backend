@@ -3,18 +3,20 @@ package coruse.Course_registration.config.security;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.security.Keys;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    private String secretKey = "yourSecretKey";  // JWT를 서명할 비밀 키
-    private long expirationTime = 86400000L; // 24시간 유효
+    private static SecretKey secretKey = Keys.secretKeyFor(SignatureAlgorithm.HS256);  // JWT를 서명할 비밀 키
+    private static long expirationTime = 86400000L; // 24시간 유효
 
     // JWT 토큰 생성
-    public String generateToken(String username) {
+    public static String generateToken(String username) {
         return Jwts.builder()
                 .setSubject(username)  // 사용자 이름을 페이로드에 포함
                 .setIssuedAt(new Date())  // 토큰 발행 시간

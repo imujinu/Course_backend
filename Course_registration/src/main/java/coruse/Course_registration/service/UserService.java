@@ -1,5 +1,6 @@
 package coruse.Course_registration.service;
 
+import coruse.Course_registration.config.security.JwtUtil;
 import coruse.Course_registration.domain.Course;
 import coruse.Course_registration.domain.Enroll;
 import coruse.Course_registration.domain.User;
@@ -10,41 +11,26 @@ import coruse.Course_registration.dto.UserLoginResponse;
 import coruse.Course_registration.repository.EnrollRepository;
 import coruse.Course_registration.repository.CourseRepository;
 import coruse.Course_registration.repository.UserRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
+@Data
 public class UserService {
-
+    private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
     private final EnrollRepository enrollRepository;
 
-    @Autowired
-    public UserService(UserRepository userRepository, CourseRepository courseRepository, EnrollRepository enrollRepository) {
-        this.userRepository = userRepository;
-        this.courseRepository = courseRepository;
-        this.enrollRepository = enrollRepository;
-    }
-
-    public List<User> getUsersWithCustomQuery(Long keyword) {
-        return userRepository.findUsersWithCustomQuery(keyword);
-    }
-
-    public User saveUser(User user){
-        return userRepository.save(user);
-    }
-
-
-
-
-
-
-    public UserLoginResponse login(UserLoginRequest request){
+    public UserLoginResponse login(UserLoginRequest request, HttpServletResponse response){
        String studentNumber = request.getStudentNumber();
        String password = request.getPassword();
 
@@ -55,12 +41,18 @@ public class UserService {
         }
 
         User user = User.get();
-
+        String name = user.getName();
         if (!user.getPassword().equals(password)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
 
-        return new UserLoginResponse(user.getName());
+        String token = JwtUtil.generateToken(name);
+        Cookie cookie = new Cookie("token", token);
+        cookie.setHttpOnly(true);
+        cookie.setPath("/");
+        cookie.setMaxAge(3600);
+        response.addCookie(cookie);
+        return new UserLoginResponse(name, token) ;
     }
 
     @Transactional

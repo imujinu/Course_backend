@@ -42,7 +42,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
                 .authorizeRequests()
-                .requestMatchers("/login", "/course").permitAll()  // 인증 없이 접근 가능한 URL
+                .requestMatchers("/login", "/course" , "/regist").permitAll()  // 인증 없이 접근 가능한 URL
                 .anyRequest().authenticated()  // 나머지 요청은 인증 필요
                 .and()
                 .addFilterBefore((Filter) new JwtAuthenticationFilter(jwtUtil), UsernamePasswordAuthenticationFilter.class);

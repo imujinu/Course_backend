@@ -3,6 +3,7 @@ package coruse.Course_registration.controller;
 import coruse.Course_registration.dto.*;
 import coruse.Course_registration.service.CourseService;
 import coruse.Course_registration.service.UserService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +29,9 @@ public class UserController {
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest request) {
-        UserLoginResponse response = userService.login(request);
-        return ResponseEntity.ok(response);
+    public ResponseEntity<UserLoginResponse> login(@Valid @RequestBody UserLoginRequest request,  HttpServletResponse response) {
+        UserLoginResponse result = userService.login(request, response);
+        return ResponseEntity.ok(result);
     }
 
     //강좌 조회
@@ -39,10 +40,6 @@ public class UserController {
         List<CourseResponse> courseResponses = courseService.getAllCourse();
         return ResponseEntity.ok(courseResponses);
     }
-
-
-
-
 
     //수강 신청
     @PostMapping("/regist")
