@@ -1,7 +1,6 @@
 package coruse.Course_registration.domain;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +20,7 @@ public class User {
     private Long id;
     private String name;
     private String email;
+    @Column(unique = true)
     private String studentNumber;
     private String password;
     private String major;
@@ -28,6 +28,6 @@ public class User {
 
     @Builder.Default
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CourseRegistration> registrations = new ArrayList<>();
+    private List<Enroll> registrations = new ArrayList<>();
 
 }

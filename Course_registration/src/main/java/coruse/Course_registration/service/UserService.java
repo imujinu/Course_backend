@@ -1,17 +1,16 @@
 package coruse.Course_registration.service;
 
 import coruse.Course_registration.domain.Course;
-import coruse.Course_registration.domain.CourseRegistration;
+import coruse.Course_registration.domain.Enroll;
 import coruse.Course_registration.domain.User;
-import coruse.Course_registration.dto.CourseRegiRequest;
-import coruse.Course_registration.dto.CourseRegiResponse;
+import coruse.Course_registration.dto.EnrollRequest;
+import coruse.Course_registration.dto.EnrolliResponse;
 import coruse.Course_registration.dto.UserLoginRequest;
 import coruse.Course_registration.dto.UserLoginResponse;
-import coruse.Course_registration.repository.CourseRegistrationRepository;
+import coruse.Course_registration.repository.EnrollRepository;
 import coruse.Course_registration.repository.CourseRepository;
 import coruse.Course_registration.repository.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -23,17 +22,17 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final CourseRepository courseRepository;
-    private final CourseRegistrationRepository courseRegistrationRepository;
+    private final EnrollRepository enrollRepository;
 
     @Autowired
-    public UserService(UserRepository userRepository, CourseRepository courseRepository, CourseRegistrationRepository courseRegistrationRepository) {
+    public UserService(UserRepository userRepository, CourseRepository courseRepository, EnrollRepository enrollRepository) {
         this.userRepository = userRepository;
         this.courseRepository = courseRepository;
-        this.courseRegistrationRepository = courseRegistrationRepository;
+        this.enrollRepository = enrollRepository;
     }
 
     public List<User> getUsersWithCustomQuery(Long keyword) {
-        return userRepository.findUsersWithCustomQuery(keyword);  // QueryDSL 쿼리 실행
+        return userRepository.findUsersWithCustomQuery(keyword);
     }
 
     public User saveUser(User user){
@@ -51,7 +50,6 @@ public class UserService {
 
         Optional<User> User = userRepository.findByStudentNumber(studentNumber);
 
-        // 2. 유저가 존재하는지 확인
         if (User.isEmpty()) {
             throw new IllegalArgumentException("존재하지 않는 학번입니다.");
         }
@@ -66,22 +64,22 @@ public class UserService {
     }
 
     @Transactional
-    public CourseRegiResponse regist(CourseRegiRequest request) {
+    public EnrolliResponse regist(EnrollRequest request) {
         Long id = request.getId();
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 강좌가 존재하지 않습니다."));
 
-        User user = userRepository.findById(id) // 또는 SecurityContextHolder 등
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
-        CourseRegistration courseRegistration = CourseRegistration.builder()
+        Enroll enroll = Enroll.builder()
                 .user(user)
                 .course(course)
                 .build();
 
-        courseRegistrationRepository.save(courseRegistration);
+        enrollRepository.save(enroll);
 
-        return new CourseRegiResponse("수강신청이 완료되었습니다.");
+        return new EnrolliResponse("수강신청이 완료되었습니다.");
     }
 
 

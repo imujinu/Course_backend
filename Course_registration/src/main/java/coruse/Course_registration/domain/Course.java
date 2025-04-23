@@ -6,7 +6,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -20,11 +19,12 @@ public class Course {
     private Long id;
     private String course;
     private String professor;
-    private Boolean isOnline;
-    private String type;
-    private Date date;
+    private String isOnline;
+    private String isMajor;
+    private String date;
+    private String time;
 
     @OneToMany(mappedBy = "course")
-    private List<CourseRegistration> registrations;
+    private List<Enroll> registrations;
 
 }
