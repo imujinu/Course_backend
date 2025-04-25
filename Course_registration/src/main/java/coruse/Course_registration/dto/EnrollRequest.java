@@ -1,14 +1,14 @@
 package coruse.Course_registration.dto;
 
+import coruse.Course_registration.domain.Enroll;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
+@NoArgsConstructor
 public class EnrollRequest {
-    private Long id;
-    private String course;
-    private String date;
-    private String isMajor;
-    private String isOnline;
-    private String professor;
-    private String time;
+   private List<Long> courseNumber;
+   private String name;
 }

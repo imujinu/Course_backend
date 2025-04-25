@@ -10,6 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
+
     Optional<User> findByStudentNumber(String studentNumber);
 
+    Optional<User> findByName(String name);
 }

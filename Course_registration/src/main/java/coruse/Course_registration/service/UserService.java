@@ -42,6 +42,7 @@ public class UserService {
 
         User user = User.get();
         String name = user.getName();
+        String number = user.getStudentNumber();
         if (!user.getPassword().equals(password)) {
             throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
         }
@@ -52,24 +53,30 @@ public class UserService {
         cookie.setPath("/");
         cookie.setMaxAge(3600);
         response.addCookie(cookie);
-        return new UserLoginResponse(name, token) ;
+        return new UserLoginResponse(name, number, token) ;
     }
 
     @Transactional
     public EnrolliResponse regist(EnrollRequest request) {
-        Long id = request.getId();
-        Course course = courseRepository.findById(id)
+        System.out.println("=== 1 ===");
+        List<Long> coursesNumber = request.getCourseNumber();
+        System.out.println("=== 2 ===");
+        String name = request.getName();
+        System.out.println("name: " + name);
+        System.out.println("*************" + name);
+        List<Course> courseList = courseRepository.findByCourseNumber(coursesNumber)
                 .orElseThrow(() -> new IllegalArgumentException("해당 강좌가 존재하지 않습니다."));
-
-        User user = userRepository.findById(id)
+        User user = userRepository.findByName(name)
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 존재하지 않습니다."));
 
-        Enroll enroll = Enroll.builder()
-                .user(user)
-                .course(course)
-                .build();
+        for (Course course : courseList) {
+            Enroll enroll = Enroll.builder()
+                    .user(user)
+                    .course(course)
+                    .build();
 
-        enrollRepository.save(enroll);
+            enrollRepository.save(enroll);
+        }
 
         return new EnrolliResponse("수강신청이 완료되었습니다.");
     }
